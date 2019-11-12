@@ -1,0 +1,3 @@
+static/css/bootstrap* linguist-vendored=true
+static/fonts/* linguist-vendored=true
+static/js/libs/* linguist-vendored=true
