@@ -27,6 +27,7 @@ def prepare():
     commit()
     push()
 
+
 # deploy to heroku
 
 
@@ -50,6 +51,7 @@ def deploy():
     commit()
     heroku()
     heroku_test()
+
 
 # rollback
 
