@@ -17,6 +17,7 @@ GENRES = [
     ("Reggae", "Reggae"),
     ("Rock n Roll", "Rock n Roll"),
     ("Soul", "Soul"),
+    ("Swing", "Swing"),
     ("Other", "Other"),
 ]
 STATES = [
@@ -71,6 +72,28 @@ STATES = [
     ("WV", "WV"),
     ("WI", "WI"),
     ("WY", "WY"),
+]
+GENRE_CHECK = [
+    "Alternative",
+    "Blues",
+    "Classical",
+    "Country",
+    "Electronic",
+    "Folk",
+    "Funk",
+    "Hip-Hop",
+    "Heavy Metal",
+    "Instrumental",
+    "Jazz",
+    "Musical Theatre",
+    "Pop",
+    "Punk",
+    "R&B",
+    "Reggae",
+    "Rock n Roll",
+    "Soul",
+    "Swing",
+    "Other",
 ]
 ARTISTS = [
     {

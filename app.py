@@ -1,8 +1,10 @@
 import babel
 import dateutil.parser
+import enum
 
 # import json
 import logging
+import sys
 from datetime import datetime
 from flask import (
     Flask,
@@ -19,10 +21,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 # from flask_wtf import Form
 from logging import Formatter, FileHandler
+from sqlalchemy import CheckConstraint, exc
 
-# from sqlalchemy import exc
-
-from constants import ARTISTS, SHOWS, VENUES
+from constants import ARTISTS, GENRE_CHECK, SHOWS, VENUES
 from forms import ArtistForm, ShowForm, VenueForm
 
 app = Flask(__name__)
@@ -31,33 +32,30 @@ app.config.from_object("config")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
+@app.before_first_request
+def populate_db():
+    for artist in ARTISTS:
+        db.session.add(Artist(**artist))
+
+    for show in SHOWS:
+        db.session.add(Show(**show))
+
+    for venue in VENUES:
+        db.session.add(Venue(**venue))
+
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError:
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+
+
 # ----------------------------------------------------------------------------#
 # Models.
 # ----------------------------------------------------------------------------#
-GENRE = db.Enum(
-    "Alternative",
-    "Blues",
-    "Classical",
-    "Country",
-    "Electronic",
-    "Folk",
-    "Funk",
-    "Hip",
-    "Heavy Metal",
-    "Instrumental",
-    "Jazz",
-    "Musical Theatre",
-    "Pop",
-    "Punk",
-    "R&B",
-    "Reggae",
-    "Rock n Roll",
-    "Soul",
-    "Other",
-    name="genre",
-)
-
-
 class Venue(db.Model):
     __tablename__ = "venues"
 
@@ -69,11 +67,21 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    genres = db.Column(db.ARRAY(GENRE))
+    genres = db.Column(db.ARRAY(db.String(30)))
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(500))
     shows = db.relationship("Show", backref="venue", lazy=True)
+
+    def __init__(self, **kwargs):
+        super(Venue, self).__init__(**kwargs)
+        check_genres = all(genre in GENRE_CHECK for genre in self.genres)
+        if not check_genres:
+            raise exc.ProgrammingError(
+                "Invalid genre",
+                {"Genres passed": self.genres},
+                {"Genres allowed": GENRE_CHECK},
+            )
 
     @property
     def past_shows(self):
@@ -107,13 +115,23 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.ARRAY(GENRE))
+    genres = db.Column(db.ARRAY(db.String(30)))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(500))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(500))
     shows = db.relationship("Show", backref="artist", lazy=True)
+
+    def __init__(self, **kwargs):
+        super(Artist, self).__init__(**kwargs)
+        check_genres = all(genre in GENRE_CHECK for genre in self.genres)
+        if not check_genres:
+            raise exc.ProgrammingError(
+                "Invalid genre",
+                {"Genres passed": self.genres},
+                {"Genres allowed": GENRE_CHECK},
+            )
 
     @property
     def past_shows(self):
@@ -209,6 +227,8 @@ def venues():
             ],
         },
     ]
+    city_list = Venue.query.distinct(Venue.city).all()
+    print(city_list)
     return render_template("pages/venues.html", areas=data)
 
 
