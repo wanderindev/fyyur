@@ -5,7 +5,7 @@ from app import create_app, db
 from constants import ARTISTS, SHOWS, VENUES
 from models import Artist, Show, Venue
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'development')
+app = create_app(os.getenv("FLASK_CONFIG") or "development")
 
 
 @app.before_first_request
@@ -28,5 +28,5 @@ def populate_db():
         db.session.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

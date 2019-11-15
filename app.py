@@ -1,5 +1,6 @@
 import babel
 import dateutil.parser
+
 # import json
 import logging
 from flask import (
@@ -13,6 +14,7 @@ from flask import (
 )
 
 from flask_moment import Moment
+
 # from flask_wtf import Form
 from logging import Formatter, FileHandler
 from flask_migrate import Migrate
@@ -24,6 +26,7 @@ from forms import ArtistForm, ShowForm, VenueForm
 db = SQLAlchemy()
 migrate = Migrate()
 moment = Moment()
+
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -164,10 +167,9 @@ def create_app(config_name):
             "past_shows_count": 1,
             "upcoming_shows_count": 1,
         }
-        data = \
-        list(filter(lambda d: d["id"] == venue_id, [data1, data2, data3]))[
-            0
-        ]
+        data = list(
+            filter(lambda d: d["id"] == venue_id, [data1, data2, data3])
+        )[0]
         return render_template("pages/show_venue.html", venue=data)
 
     #  Create Venue
@@ -205,9 +207,9 @@ def create_app(config_name):
     def artists():
         # TODO: replace with real data returned from querying the database
         data = [
-            {"id": 4, "name": "Guns N Petals", },
-            {"id": 5, "name": "Matt Quevedo", },
-            {"id": 6, "name": "The Wild Sax Band", },
+            {"id": 4, "name": "Guns N Petals",},
+            {"id": 5, "name": "Matt Quevedo",},
+            {"id": 6, "name": "The Wild Sax Band",},
         ]
         return render_template("pages/artists.html", artists=data)
 
@@ -219,7 +221,8 @@ def create_app(config_name):
         response = {
             "count": 1,
             "data": [
-                {"id": 4, "name": "Guns N Petals", "num_upcoming_shows": 0, }],
+                {"id": 4, "name": "Guns N Petals", "num_upcoming_shows": 0,}
+            ],
         }
         return render_template(
             "pages/search_artists.html",
@@ -310,10 +313,9 @@ def create_app(config_name):
             "past_shows_count": 0,
             "upcoming_shows_count": 3,
         }
-        data = \
-        list(filter(lambda d: d["id"] == artist_id, [data1, data2, data3]))[
-            0
-        ]
+        data = list(
+            filter(lambda d: d["id"] == artist_id, [data1, data2, data3])
+        )[0]
         return render_template("pages/show_artist.html", artist=data)
 
     #  Update
@@ -335,8 +337,9 @@ def create_app(config_name):
             "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
         }
         # TODO: populate form with fields from artist with ID <artist_id>
-        return render_template("forms/edit_artist.html", form=form,
-                               artist=artist)
+        return render_template(
+            "forms/edit_artist.html", form=form, artist=artist
+        )
 
     @app.route("/artists/<int:artist_id>/edit", methods=["POST"])
     def edit_artist_submission(artist_id):

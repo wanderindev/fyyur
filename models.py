@@ -8,13 +8,13 @@ from constants import GENRE_CHECK
 
 class ModelMixin(object):
     def __iter__(self):
-        return ((k, v) for k, v in vars(self).items() if not k.startswith('_'))
+        return ((k, v) for k, v in vars(self).items() if not k.startswith("_"))
 
     def __repr__(self):
         class_name = type(self).__name__
-        attributes = ", ".join([f'{k!r}={v!r}' for k, v in self])
+        attributes = ", ".join([f"{k!r}={v!r}" for k, v in self])
 
-        return f'<{class_name}({attributes})>'
+        return f"<{class_name}({attributes})>"
 
     def delete_from_db(self):
         db.session.delete(self)
@@ -97,23 +97,23 @@ class Venue(db.Model):
 
     @classmethod
     def get_venues_by_location(cls):
-        results = []
-        locations = cls.get_locations()
-        for _city, _state in locations:
-            d = {
+        return [
+            {
                 "city": _city,
                 "state": _state,
-                "venues": []
+                "venues": [
+                    {
+                        "id": venue.id,
+                        "name": venue.name,
+                        "num_upcoming_shows": cls.upcoming_shows_count(
+                            venue.id
+                        ),
+                    }
+                    for venue in cls.query.filter_by(city=_city).all()
+                ],
             }
-            venues = cls.query.filter_by(city=_city).all()
-            for venue in venues:
-                d["venues"].append({
-                    "id": venue.id,
-                    "name": venue.name,
-                    "num_upcoming_shows": cls.upcoming_shows_count(venue.id)
-                })
-            results.append(d)
-        return results
+            for _city, _state in cls.get_locations()
+        ]
 
     def __repr__(self):
         return f"<Venue {self.id} {self.name}>"
