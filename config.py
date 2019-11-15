@@ -1,15 +1,34 @@
 import os
 
-SECRET_KEY = os.urandom(32)
-# Grabs the folder where the script runs.
-basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Enable debug mode.
-DEBUG = True
+class Config:
+    SECRET_KEY = os.urandom(32)
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or "postgresql://fyyur:pass@localhost:5432/fyyur"
+    TESTING = os.environ.get('TESTING') or False
+    DEBUG = os.environ.get('DEBUG') or True
+    basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Connect to the database
+    @staticmethod
+    def init_app(app):
+        pass
 
 
-# TODO IMPLEMENT DATABASE URL
-SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost:5432/fyyur"
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+class DevelopmentConfig(Config):
+    DEBUG = True
+    TESTING = False
+
+
+class TestingConfig(Config):
+    pass
+
+
+class ProductionConfig(Config):
+    pass
+
+
+config = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig
+}
