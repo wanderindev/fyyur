@@ -24,23 +24,23 @@ class ModelMixin(object):
         db.session.add(self)
         db.session.commit()
 
-    def to_dict(self):
-        output = {}
-
-        for k, v in self:
+    @classmethod
+    def to_dict(cls, _model, _obj):
+        _obj = _obj or {}
+        for k, v in _model:
             if type(v) == collections.InstrumentedList:
-                output[k] = [item.to_dict() for item in v]
+                _obj[k] = [item.to_dict() for item in v]
             elif isinstance(v, (date, datetime, time)):
-                output[k] = v.isoformat()
+                _obj[k] = v.isoformat()
             elif isinstance(v, (float, Decimal)):
-                output[k] = str(v)
+                _obj[k] = str(v)
             else:
-                output[k] = v
+                _obj[k] = v
 
-        return output
+        return _obj
 
 
-class Venue(db.Model):
+class Venue(db.Model, ModelMixin):
     __tablename__ = "venues"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -69,15 +69,11 @@ class Venue(db.Model):
 
     @classmethod
     def past_shows(cls, _id):
-        return Show.query.filter(
-            Show.venue_id == _id, Show.start_time < datetime.now()
-        ).all()
+        return Show.past_shows_by_venue(_id)
 
     @classmethod
     def upcomming_shows(cls, _id):
-        return Show.query.filter(
-            Show.venue_id == _id, Show.start_time > datetime.now()
-        ).all()
+        return Show.upcoming_shows_by_venue(_id)
 
     @classmethod
     def past_shows_count(cls, _id):
@@ -130,8 +126,15 @@ class Venue(db.Model):
             "count": len(venues),
         }
 
-    def __repr__(self):
-        return f"<Venue {self.id} {self.name}>"
+    @classmethod
+    def get_venue(cls, _id):
+        _obj = {
+            "past_shows": cls.past_shows(_id),
+            "past_shows_count": cls.past_shows_count(_id),
+            "upcomming_shows": cls.upcomming_shows(_id),
+            "upcoming_shows_count": cls.upcoming_shows_count(_id),
+        }
+        return cls.to_dict(cls.get_venue_by_id(_id), _obj)
 
 
 class Artist(db.Model):
@@ -184,7 +187,7 @@ class Artist(db.Model):
         return f"<Artist {self.id} {self.name}>"
 
 
-class Show(db.Model):
+class Show(db.Model, ModelMixin):
     __tablename__ = "shows"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -196,8 +199,34 @@ class Show(db.Model):
         db.Integer, db.ForeignKey("venues.id"), nullable=False
     )
 
-    def __repr__(self):
-        return (
-            f"<Show {self.id} {self.artist.name} "
-            f"{self.venue.name} {self.start_time}>"
-        )
+    @classmethod
+    def upcoming_shows_by_venue(cls, _venue_id):
+        shows = cls.query.filter(
+            cls.venue_id == _venue_id, Show.start_time > datetime.now()
+        ).all()
+
+        print(shows)
+        return [
+            {
+                "artist_id": show.artist.id,
+                "artist_name": show.artist.name,
+                "artist_image_link": show.artist.image_link,
+                "start_time": show.start_time.isoformat(),
+            }
+            for show in shows
+        ]
+
+    @classmethod
+    def past_shows_by_venue(cls, _venue_id):
+        shows = cls.query.filter(
+            cls.venue_id == _venue_id, Show.start_time < datetime.now()
+        ).all()
+        return [
+            {
+                "artist_id": show.artist.id,
+                "artist_name": show.artist.name,
+                "artist_image_link": show.artist.image_link,
+                "start_time": show.start_time.isoformat(),
+            }
+            for show in shows
+        ]
