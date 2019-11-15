@@ -115,6 +115,21 @@ class Venue(db.Model):
             for _city, _state in cls.get_locations()
         ]
 
+    @classmethod
+    def search(cls, search_term):
+        venues = cls.query.filter(cls.name.ilike(f"%{search_term}%")).all()
+        return {
+            "data": [
+                {
+                    "id": venue.id,
+                    "name": venue.name,
+                    "num_upcoming_shows": cls.upcoming_shows_count(venue.id),
+                }
+                for venue in venues
+            ],
+            "count": len(venues),
+        }
+
     def __repr__(self):
         return f"<Venue {self.id} {self.name}>"
 
