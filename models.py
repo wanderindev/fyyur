@@ -161,7 +161,7 @@ class Venue(db.Model, ModelMixin):
         return cls.to_dict(cls.get_venue_by_id(_id), _obj)
 
 
-class Artist(db.Model):
+class Artist(db.Model, ModelMixin):
     __tablename__ = "artists"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -187,28 +187,28 @@ class Artist(db.Model):
                 {"Genres allowed": GENRE_CHECK},
             )
 
-    @property
-    def past_shows(self):
-        return Show.query.filter(
-            Show.artist_id == self.id, Show.start_time < datetime.now()
-        ).all()
+    @classmethod
+    def past_shows(cls, _id):
+        return Show.past_shows_by_artist(_id)
 
-    @property
-    def upcomming_shows(self):
-        return Show.query.filter(
-            Show.artist_id == self.id, Show.start_time > datetime.now()
-        ).all()
+    @classmethod
+    def upcomming_shows(cls, _id):
+        return Show.upcoming_shows_by_artist(_id)
 
-    @property
-    def past_shows_count(self):
-        return len(self.past_shows)
+    @classmethod
+    def past_shows_count(cls, _id):
+        return len(cls.past_shows(_id))
 
-    @property
-    def upcoming_shows_count(self):
-        return len(self.upcomming_shows)
+    @classmethod
+    def upcoming_shows_count(cls, _id):
+        return len(cls.upcomming_shows(_id))
 
-    def __repr__(self):
-        return f"<Artist {self.id} {self.name}>"
+    @classmethod
+    def get_artists(cls):
+        return [
+            {"id": artist.id, "name": artist.name,}
+            for artist in cls.query.all()
+        ]
 
 
 class Show(db.Model, ModelMixin):
@@ -248,6 +248,36 @@ class Show(db.Model, ModelMixin):
                 "artist_id": show.artist.id,
                 "artist_name": show.artist.name,
                 "artist_image_link": show.artist.image_link,
+                "start_time": show.start_time.isoformat(),
+            }
+            for show in shows
+        ]
+
+    @classmethod
+    def upcoming_shows_by_artist(cls, _artist_id):
+        shows = cls.query.filter(
+            cls.artist_id == _artist_id, Show.start_time > datetime.now()
+        ).all()
+        return [
+            {
+                "venue_id": show.venue.id,
+                "venue_name": show.venue.name,
+                "venue_image_link": show.venue.image_link,
+                "start_time": show.start_time.isoformat(),
+            }
+            for show in shows
+        ]
+
+    @classmethod
+    def past_shows_by_artist(cls, _artist_id):
+        shows = cls.query.filter(
+            cls.artist_id == _artist_id, Show.start_time < datetime.now()
+        ).all()
+        return [
+            {
+                "venue_id": show.venue.id,
+                "venue_name": show.venue.name,
+                "venue_image_link": show.venue.image_link,
                 "start_time": show.start_time.isoformat(),
             }
             for show in shows
