@@ -47,10 +47,7 @@ class ArtistForm(Form):
     )
     image_link = StringField("image_link")
     genres = SelectMultipleField(
-        # TODO implement enum restriction
-        "genres",
-        validators=[DataRequired()],
-        choices=GENRES,
+        "genres", validators=[DataRequired()], choices=GENRES,
     )
     facebook_link = StringField(
         # TODO implement enum restriction

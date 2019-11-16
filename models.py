@@ -74,7 +74,9 @@ class Venue(db.Model, ModelMixin):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(500))
-    shows = db.relationship("Show", backref="venue", lazy=True)
+    shows = db.relationship(
+        "Show", backref="venue", lazy=True, cascade="delete"
+    )
 
     def __init__(self, **kwargs):
         super(Venue, self).__init__(**kwargs)
@@ -153,6 +155,9 @@ class Venue(db.Model, ModelMixin):
             "upcomming_shows": cls.upcomming_shows(_id),
             "upcoming_shows_count": cls.upcoming_shows_count(_id),
         }
+        venue = cls.get_venue_by_id(_id)
+        if not venue:
+            return None
         return cls.to_dict(cls.get_venue_by_id(_id), _obj)
 
 
@@ -223,8 +228,6 @@ class Show(db.Model, ModelMixin):
         shows = cls.query.filter(
             cls.venue_id == _venue_id, Show.start_time > datetime.now()
         ).all()
-
-        print(shows)
         return [
             {
                 "artist_id": show.artist.id,

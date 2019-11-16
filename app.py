@@ -62,10 +62,27 @@ def create_app(config_name="development"):
             search_term=search_term,
         )
 
-    @app.route("/venues/<int:venue_id>")
+    @app.route("/venues/<int:venue_id>", methods=["GET"])
     def show_venue(venue_id):
         venue = Venue.get_venue(venue_id)
+        if not venue:
+            return render_template("pages/home.html")
         return render_template("pages/show_venue.html", venue=venue)
+
+    @app.route("/venues/<int:venue_id>", methods=["DELETE"])
+    def delete_venue(venue_id):
+        venue = Venue.get_venue_by_id(venue_id)
+        venue_name = venue.name
+        result = venue.delete_from_db()
+        if result["error"]:
+            flash(
+                "An error occurred. Venue "
+                + venue_name
+                + " could not be deleted."
+            )
+            abort(500)
+        flash("Venue " + venue_name + " was successfully deleted!")
+        return render_template("pages/home.html")
 
     @app.route("/venues/create", methods=["GET"])
     def create_venue_form():
@@ -89,18 +106,8 @@ def create_app(config_name="development"):
                 + " could not be listed."
             )
             abort(500)
-        else:
-            flash("Venue " + data["name"] + " was successfully listed!")
-            return render_template("pages/home.html")
-
-    @app.route("/venues/<venue_id>", methods=["DELETE"])
-    def delete_venue(venue_id):
-        # TODO: Complete this endpoint for taking a venue_id, and using
-        # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-
-        # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
-        # clicking that button delete it from the db then redirect the user to the homepage
-        return None
+        flash("Venue " + data["name"] + " was successfully listed!")
+        return render_template("pages/home.html")
 
     #  Artists
     #  ----------------------------------------------------------------
