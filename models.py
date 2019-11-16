@@ -210,6 +210,21 @@ class Artist(db.Model, ModelMixin):
             for artist in cls.query.all()
         ]
 
+    @classmethod
+    def search(cls, search_term):
+        artists = cls.query.filter(cls.name.ilike(f"%{search_term}%")).all()
+        return {
+            "data": [
+                {
+                    "id": artist.id,
+                    "name": artist.name,
+                    "num_upcoming_shows": cls.upcoming_shows_count(artist.id),
+                }
+                for artist in artists
+            ],
+            "count": len(artists),
+        }
+
 
 class Show(db.Model, ModelMixin):
     __tablename__ = "shows"
