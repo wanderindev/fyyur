@@ -1,3 +1,4 @@
+import sys
 from datetime import date, datetime, time
 from decimal import Decimal
 from sqlalchemy import exc
@@ -17,12 +18,30 @@ class ModelMixin(object):
         return f"<{class_name}({attributes})>"
 
     def delete_from_db(self):
-        db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            return {"error": False}
+        except exc.SQLAlchemyError as e:
+            print(e)
+            print(sys.exc_info())
+            db.session.rollback()
+            return {"error": True}
+        finally:
+            db.session.close()
 
     def save_to_db(self):
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+            return {"error": False}
+        except exc.SQLAlchemyError as e:
+            print(e)
+            print(sys.exc_info())
+            db.session.rollback()
+            return {"error": True}
+        finally:
+            db.session.close()
 
     @classmethod
     def to_dict(cls, _model, _obj):
@@ -44,10 +63,10 @@ class Venue(db.Model, ModelMixin):
     __tablename__ = "venues"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(db.String(120), nullable=False)
+    address = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))

@@ -1,21 +1,16 @@
 import babel
 import dateutil.parser
-
-# import json
 import logging
 from flask import (
+    abort,
+    flash,
     Flask,
+    redirect,
     render_template,
     request,
-    Response,
-    flash,
-    redirect,
     url_for,
 )
-
 from flask_moment import Moment
-
-# from flask_wtf import Form
 from logging import Formatter, FileHandler
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -72,9 +67,6 @@ def create_app(config_name="development"):
         venue = Venue.get_venue(venue_id)
         return render_template("pages/show_venue.html", venue=venue)
 
-    #  Create Venue
-    #  ----------------------------------------------------------------
-
     @app.route("/venues/create", methods=["GET"])
     def create_venue_form():
         form = VenueForm()
@@ -82,15 +74,24 @@ def create_app(config_name="development"):
 
     @app.route("/venues/create", methods=["POST"])
     def create_venue_submission():
-        # TODO: insert form data as a new Venue record in the db, instead
-        # TODO: modify data to be the data object returned from db insertion
-
-        # on successful db insert, flash success
-        flash("Venue " + request.form["name"] + " was successfully listed!")
-        # TODO: on unsuccessful db insert, flash an error instead.
-        # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-        # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-        return render_template("pages/home.html")
+        genres = request.form.getlist("genres")
+        data = request.form.to_dict()
+        data["genres"] = genres
+        data["seeking_talent"] = (
+            True if data["seeking_talent"] is "y" else False
+        )
+        venue = Venue(**data)
+        result = venue.save_to_db()
+        if result["error"]:
+            flash(
+                "An error occurred. Venue "
+                + data["name"]
+                + " could not be listed."
+            )
+            abort(500)
+        else:
+            flash("Venue " + data["name"] + " was successfully listed!")
+            return render_template("pages/home.html")
 
     @app.route("/venues/<venue_id>", methods=["DELETE"])
     def delete_venue(venue_id):
