@@ -93,7 +93,7 @@ class Venue(db.Model, ModelMixin):
         return Show.past_shows_by_venue(_id)
 
     @classmethod
-    def upcomming_shows(cls, _id):
+    def upcoming_shows(cls, _id):
         return Show.upcoming_shows_by_venue(_id)
 
     @classmethod
@@ -102,7 +102,7 @@ class Venue(db.Model, ModelMixin):
 
     @classmethod
     def upcoming_shows_count(cls, _id):
-        return len(cls.upcomming_shows(_id))
+        return len(cls.upcoming_shows(_id))
 
     @classmethod
     def get_locations(cls):
@@ -152,13 +152,13 @@ class Venue(db.Model, ModelMixin):
         _obj = {
             "past_shows": cls.past_shows(_id),
             "past_shows_count": cls.past_shows_count(_id),
-            "upcomming_shows": cls.upcomming_shows(_id),
+            "upcoming_shows": cls.upcoming_shows(_id),
             "upcoming_shows_count": cls.upcoming_shows_count(_id),
         }
         venue = cls.get_venue_by_id(_id)
         if not venue:
             return None
-        return cls.to_dict(cls.get_venue_by_id(_id), _obj)
+        return cls.to_dict(venue, _obj)
 
 
 class Artist(db.Model, ModelMixin):
@@ -192,7 +192,7 @@ class Artist(db.Model, ModelMixin):
         return Show.past_shows_by_artist(_id)
 
     @classmethod
-    def upcomming_shows(cls, _id):
+    def upcoming_shows(cls, _id):
         return Show.upcoming_shows_by_artist(_id)
 
     @classmethod
@@ -201,7 +201,11 @@ class Artist(db.Model, ModelMixin):
 
     @classmethod
     def upcoming_shows_count(cls, _id):
-        return len(cls.upcomming_shows(_id))
+        return len(cls.upcoming_shows(_id))
+
+    @classmethod
+    def get_artist_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
 
     @classmethod
     def get_artists(cls):
@@ -224,6 +228,19 @@ class Artist(db.Model, ModelMixin):
             ],
             "count": len(artists),
         }
+
+    @classmethod
+    def get_artist(cls, _id):
+        _obj = {
+            "past_shows": cls.past_shows(_id),
+            "past_shows_count": cls.past_shows_count(_id),
+            "upcoming_shows": cls.upcoming_shows(_id),
+            "upcoming_shows_count": cls.upcoming_shows_count(_id),
+        }
+        artist = cls.get_artist_by_id(_id)
+        if not artist:
+            return None
+        return cls.to_dict(artist, _obj)
 
 
 class Show(db.Model, ModelMixin):
