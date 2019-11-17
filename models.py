@@ -160,6 +160,21 @@ class Venue(db.Model, ModelMixin):
             return None
         return cls.to_dict(venue, _obj)
 
+    @classmethod
+    def update(cls, _id, data):
+        venue = cls.get_by_id(_id)
+        venue.name = data.get("name", "")
+        venue.city = data.get("city", "")
+        venue.state = data.get("state", "")
+        venue.phone = data.get("phone", "")
+        venue.genres = data.get("genres", [])
+        venue.image_link = data.get("image_link", "")
+        venue.facebook_link = data.get("facebook_link", "")
+        venue.website = data.get("website", "")
+        venue.seeking_talent = data.get("seeking_talent", False)
+        venue.seeking_description = data.get("seeking_description", "")
+        return venue.save_to_db()
+
 
 class Artist(db.Model, ModelMixin):
     __tablename__ = "artists"
@@ -244,7 +259,6 @@ class Artist(db.Model, ModelMixin):
 
     @classmethod
     def update(cls, _id, data):
-        print(data["seeking_venue"])
         artist = cls.get_by_id(_id)
         artist.name = data.get("name", "")
         artist.city = data.get("city", "")

@@ -69,6 +69,33 @@ def create_app(config_name="development"):
             return render_template("pages/home.html")
         return render_template("pages/show_venue.html", venue=venue)
 
+    @app.route("/venues/<int:venue_id>/edit", methods=["GET"])
+    def edit_venue(venue_id):
+        venue = Venue.get_by_id(venue_id)
+        form = VenueForm(request.form, obj=venue)
+        form.genres.process_data(venue.genres)
+        form.seeking_talent.process_data(venue.seeking_talent)
+        return render_template("forms/edit_venue.html", form=form, venue=venue)
+
+    @app.route("/venues/<int:venue_id>/edit", methods=["POST"])
+    def edit_venue_submission(venue_id):
+        genres = request.form.getlist("genres")
+        data = request.form.to_dict()
+        data["genres"] = genres
+        data["seeking_talent"] = (
+            True if data.get("seeking_talent", False) is "y" else False
+        )
+        result = Venue.update(venue_id, data)
+        if result["error"]:
+            flash(
+                "An error occurred. Venue "
+                + data["name"]
+                + " could not be updated."
+            )
+            abort(500)
+        flash("Venue " + data["name"] + " was successfully updated!")
+        return redirect(url_for("show_venue", venue_id=venue_id))
+
     @app.route("/venues/<int:venue_id>", methods=["DELETE"])
     def delete_venue(venue_id):
         venue = Venue.get_by_id(venue_id)
@@ -135,7 +162,6 @@ def create_app(config_name="development"):
     @app.route("/artists/<int:artist_id>/edit", methods=["GET"])
     def edit_artist(artist_id):
         artist = Artist.get_by_id(artist_id)
-        print(Artist.to_dict(artist, {}))
         form = ArtistForm(request.form, obj=artist)
         form.genres.process_data(artist.genres)
         form.seeking_venue.process_data(artist.seeking_venue)
@@ -161,32 +187,6 @@ def create_app(config_name="development"):
             abort(500)
         flash("Artist " + data["name"] + " was successfully updated!")
         return redirect(url_for("show_artist", artist_id=artist_id))
-
-    @app.route("/venues/<int:venue_id>/edit", methods=["GET"])
-    def edit_venue(venue_id):
-        form = VenueForm()
-        venue = {
-            "id": 1,
-            "name": "The Musical Hop",
-            "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-            "address": "1015 Folsom Street",
-            "city": "San Francisco",
-            "state": "CA",
-            "phone": "123-123-1234",
-            "website": "https://www.themusicalhop.com",
-            "facebook_link": "https://www.facebook.com/TheMusicalHop",
-            "seeking_talent": True,
-            "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-            "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-        }
-        # TODO: populate form with values from venue with ID <venue_id>
-        return render_template("forms/edit_venue.html", form=form, venue=venue)
-
-    @app.route("/venues/<int:venue_id>/edit", methods=["POST"])
-    def edit_venue_submission(venue_id):
-        # TODO: take values from the form submitted, and update existing
-        # venue record with ID <venue_id> using the new attributes
-        return redirect(url_for("show_venue", venue_id=venue_id))
 
     #  Create Artist
     #  ----------------------------------------------------------------
