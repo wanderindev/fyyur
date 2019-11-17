@@ -235,35 +235,36 @@ def create_app(config_name="development"):
 
     @app.route("/shows/create")
     def create_shows():
-        # renders form. do not touch.
         form = ShowForm()
         return render_template("forms/new_show.html", form=form)
 
     @app.route("/shows/create", methods=["POST"])
     def create_show_submission():
-        # called to create new shows in the db, upon submitting new show listing form
-        # TODO: insert form data as a new Show record in the db, instead
-
-        # on successful db insert, flash success
+        data = request.form.to_dict()
+        show = Show(**data)
+        result = show.save_to_db()
+        if result["error"]:
+            flash(
+                "An error occurred. Show could not be listed."
+            )
+            abort(500)
         flash("Show was successfully listed!")
-        # TODO: on unsuccessful db insert, flash an error instead.
-        # e.g., flash('An error occurred. Show could not be listed.')
-        # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
         return render_template("pages/home.html")
 
     @app.errorhandler(404)
     def not_found_error(error):
-        return render_template("errors/404.html"), 404
+        return render_template("errors/404.html", error=error), 404
 
     @app.errorhandler(500)
     def server_error(error):
-        return render_template("errors/500.html"), 500
+        return render_template("errors/500.html", error=error), 500
 
     if not app.debug:
         file_handler = FileHandler("error.log")
         file_handler.setFormatter(
             Formatter(
-                "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
+                "%(asctime)s %(levelname)s: %(message)s "
+                "[in %(pathname)s:%(lineno)d]"
             )
         )
         app.logger.setLevel(logging.INFO)

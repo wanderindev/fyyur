@@ -285,6 +285,9 @@ class Show(db.Model, ModelMixin):
         db.Integer, db.ForeignKey("venues.id"), nullable=False
     )
 
+    def __init__(self, **kwargs):
+        super(Show, self).__init__(**kwargs)
+
     @classmethod
     def upcoming_shows_by_venue(cls, _venue_id):
         shows = cls.query.filter(

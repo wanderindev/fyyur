@@ -97,7 +97,7 @@ GENRE_CHECK = [
 ]
 ARTISTS = [
     {
-        "id": 4,
+        "id": 1004,
         "name": "Guns N Petals",
         "genres": ["Rock n Roll"],
         "city": "San Francisco",
@@ -113,7 +113,7 @@ ARTISTS = [
         "&fit=crop&w=300&q=80",
     },
     {
-        "id": 5,
+        "id": 1005,
         "name": "Matt Quevedo",
         "genres": ["Jazz"],
         "city": "New York",
@@ -126,7 +126,7 @@ ARTISTS = [
         "d9&auto=format&fit=crop&w=334&q=80",
     },
     {
-        "id": 6,
+        "id": 1006,
         "name": "The Wild Sax Band",
         "genres": ["Jazz", "Classical"],
         "city": "San Francisco",
@@ -140,7 +140,7 @@ ARTISTS = [
 ]
 VENUES = [
     {
-        "id": 1,
+        "id": 1001,
         "name": "The Musical Hop",
         "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
         "address": "1015 Folsom Street",
@@ -157,7 +157,7 @@ VENUES = [
         "format&fit=crop&w=400&q=60",
     },
     {
-        "id": 2,
+        "id": 1002,
         "name": "The Dueling Pianos Bar",
         "genres": ["Classical", "R&B", "Hip-Hop"],
         "address": "335 Delancey Street",
@@ -172,7 +172,7 @@ VENUES = [
         "Dd9&auto=format&fit=crop&w=750&q=80",
     },
     {
-        "id": 3,
+        "id": 1003,
         "name": "Park Square Live Music & Coffee",
         "genres": ["Rock n Roll", "Jazz", "Classical", "Folk"],
         "address": "34 Whiskey Moore Ave",
@@ -190,33 +190,33 @@ VENUES = [
 ]
 SHOWS = [
     {
-        "id": 1,
+        "id": 1001,
         "start_time": "2019-05-21T21:30:00.000Z",
-        "artist_id": 4,
-        "venue_id": 1,
+        "artist_id": 1004,
+        "venue_id": 1001,
     },
     {
-        "id": 2,
+        "id": 1002,
         "start_time": "2019-06-15T23:00:00.000Z",
-        "artist_id": 5,
-        "venue_id": 3,
+        "artist_id": 1005,
+        "venue_id": 1003,
     },
     {
-        "id": 3,
+        "id": 1003,
         "start_time": "2035-04-01T20:00:00.000Z",
-        "artist_id": 6,
-        "venue_id": 3,
+        "artist_id": 1006,
+        "venue_id": 1003,
     },
     {
-        "id": 4,
+        "id": 1004,
         "start_time": "2035-04-08T20:00:00.000Z",
-        "artist_id": 6,
-        "venue_id": 3,
+        "artist_id": 1006,
+        "venue_id": 1003,
     },
     {
-        "id": 5,
+        "id": 1005,
         "start_time": "2035-04-15T20:00:00.000Z",
-        "artist_id": 6,
-        "venue_id": 3,
+        "artist_id": 1006,
+        "venue_id": 1003,
     },
 ]

@@ -8,6 +8,7 @@ class Config:
         os.environ.get("SQLALCHEMY_DATABASE_URI")
         or "postgresql://fyyur:pass@localhost:5432/fyyur"
     )
+    POPULATE_DB = os.environ.get("POPULATE_DB") or True
     TESTING = os.environ.get("TESTING") or False
     DEBUG = os.environ.get("DEBUG") or True
     basedir = os.path.abspath(os.path.dirname(__file__))
