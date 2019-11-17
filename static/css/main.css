@@ -210,6 +210,8 @@ h2.monospace {
   opacity: 0.5;
 }
 
-#delete-btn {
+#delete-venue-btn,
+#delete-artist-btn,
+#edit-btn {
   margin-top: 24px;
 }

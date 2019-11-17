@@ -225,7 +225,7 @@ class Artist(db.Model, ModelMixin):
     @classmethod
     def get_artists(cls):
         return [
-            {"id": artist.id, "name": artist.name,}
+            {"id": artist.id, "name": artist.name, }
             for artist in cls.query.all()
         ]
 
@@ -343,4 +343,18 @@ class Show(db.Model, ModelMixin):
                 "start_time": show.start_time.isoformat(),
             }
             for show in shows
+        ]
+
+    @classmethod
+    def get_shows(cls):
+        return [
+            {
+                "venue_id": show.venue.id,
+                "venue_name": show.venue.name,
+                "artist_id": show.artist.id,
+                "artist_name": show.artist.name,
+                "artist_image_link": show.artist.image_link,
+                "start_time": show.start_time.isoformat(),
+            }
+            for show in cls.query.all()
         ]

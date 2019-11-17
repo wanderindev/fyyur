@@ -33,13 +33,13 @@ def create_app(config_name="development"):
 
     from models import Artist, Show, Venue
 
-    def format_datetime(value, format="medium"):
+    def format_datetime(value, _format="medium"):
         date = dateutil.parser.parse(value)
-        if format == "full":
-            format = "EEEE MMMM, d, y 'at' h:mma"
-        elif format == "medium":
-            format = "EE MM, dd, y h:mma"
-        return babel.dates.format_datetime(date, format, locale="en_US")
+        if _format == "full":
+            _format = "EEEE MMMM, d, y 'at' h:mma"
+        elif _format == "medium":
+            _format = "EE MM, dd, y h:mma"
+        return babel.dates.format_datetime(date, _format, locale="en_US")
 
     app.jinja_env.filters["datetime"] = format_datetime
 
@@ -188,8 +188,20 @@ def create_app(config_name="development"):
         flash("Artist " + data["name"] + " was successfully updated!")
         return redirect(url_for("show_artist", artist_id=artist_id))
 
-    #  Create Artist
-    #  ----------------------------------------------------------------
+    @app.route("/artist/<int:artist_id>", methods=["DELETE"])
+    def delete_artist(artist_id):
+        artist = Artist.get_by_id(artist_id)
+        artist_name = artist.name
+        result = artist.delete_from_db()
+        if result["error"]:
+            flash(
+                "An error occurred. Artist "
+                + artist_name
+                + " could not be deleted."
+            )
+            abort(500)
+        flash("Artist " + artist_name + " was successfully deleted!")
+        return render_template("pages/home.html")
 
     @app.route("/artists/create", methods=["GET"])
     def create_artist_form():
@@ -198,66 +210,27 @@ def create_app(config_name="development"):
 
     @app.route("/artists/create", methods=["POST"])
     def create_artist_submission():
-        # called upon submitting the new artist listing form
-        # TODO: insert form data as a new Venue record in the db, instead
-        # TODO: modify data to be the data object returned from db insertion
-
-        # on successful db insert, flash success
-        flash("Artist " + request.form["name"] + " was successfully listed!")
-        # TODO: on unsuccessful db insert, flash an error instead.
-        # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+        genres = request.form.getlist("genres")
+        data = request.form.to_dict()
+        data["genres"] = genres
+        data["seeking_venue"] = (
+            True if data.get("seeking_venue", False) is "y" else False
+        )
+        artist = Artist(**data)
+        result = artist.save_to_db()
+        if result["error"]:
+            flash(
+                "An error occurred. Artist "
+                + data["name"]
+                + " could not be listed."
+            )
+            abort(500)
+        flash("Artist " + data["name"] + " was successfully listed!")
         return render_template("pages/home.html")
-
-    #  Shows
-    #  ----------------------------------------------------------------
 
     @app.route("/shows")
     def shows():
-        # displays list of shows at /shows
-        # TODO: replace with real venues data.
-        #       num_shows should be aggregated based on number of upcoming shows per venue.
-        data = [
-            {
-                "venue_id": 1,
-                "venue_name": "The Musical Hop",
-                "artist_id": 4,
-                "artist_name": "Guns N Petals",
-                "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-                "start_time": "2019-05-21T21:30:00.000Z",
-            },
-            {
-                "venue_id": 3,
-                "venue_name": "Park Square Live Music & Coffee",
-                "artist_id": 5,
-                "artist_name": "Matt Quevedo",
-                "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-                "start_time": "2019-06-15T23:00:00.000Z",
-            },
-            {
-                "venue_id": 3,
-                "venue_name": "Park Square Live Music & Coffee",
-                "artist_id": 6,
-                "artist_name": "The Wild Sax Band",
-                "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-                "start_time": "2035-04-01T20:00:00.000Z",
-            },
-            {
-                "venue_id": 3,
-                "venue_name": "Park Square Live Music & Coffee",
-                "artist_id": 6,
-                "artist_name": "The Wild Sax Band",
-                "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-                "start_time": "2035-04-08T20:00:00.000Z",
-            },
-            {
-                "venue_id": 3,
-                "venue_name": "Park Square Live Music & Coffee",
-                "artist_id": 6,
-                "artist_name": "The Wild Sax Band",
-                "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-                "start_time": "2035-04-15T20:00:00.000Z",
-            },
-        ]
+        data = Show.get_shows()
         return render_template("pages/shows.html", shows=data)
 
     @app.route("/shows/create")

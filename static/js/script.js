@@ -4,11 +4,23 @@ window.parseISOString = function parseISOString(s) {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const deleteBtn = document.getElementById('delete-btn');
-  if (deleteBtn) {
-    deleteBtn.onclick = e => {
+  const deleteVenueBtn = document.getElementById('delete-venue-btn');
+  const deleteArtistBtn = document.getElementById('delete-artist-btn');
+  if (deleteVenueBtn) {
+    deleteVenueBtn.onclick = e => {
     const delId = e.target.dataset.id;
     fetch('/venues/' + delId, {
+      method: 'DELETE'
+    })
+        .then(() => {
+
+        })
+    }
+  }
+  if (deleteArtistBtn) {
+    deleteArtistBtn.onclick = e => {
+    const delId = e.target.dataset.id;
+    fetch('/artist/' + delId, {
       method: 'DELETE'
     })
         .then(() => {
