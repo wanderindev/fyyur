@@ -71,7 +71,7 @@ def create_app(config_name="development"):
 
     @app.route("/venues/<int:venue_id>", methods=["DELETE"])
     def delete_venue(venue_id):
-        venue = Venue.get_venue_by_id(venue_id)
+        venue = Venue.get_by_id(venue_id)
         venue_name = venue.name
         result = venue.delete_from_db()
         if result["error"]:
@@ -95,7 +95,7 @@ def create_app(config_name="development"):
         data = request.form.to_dict()
         data["genres"] = genres
         data["seeking_talent"] = (
-            True if data["seeking_talent"] is "y" else False
+            True if data.get("seeking_talent", False) is "y" else False
         )
         venue = Venue(**data)
         result = venue.save_to_db()
@@ -127,38 +127,39 @@ def create_app(config_name="development"):
     @app.route("/artists/<int:artist_id>")
     def show_artist(artist_id):
         artist = Artist.get_artist(artist_id)
+        print(artist)
         if not artist:
             return render_template("pages/home.html")
         return render_template("pages/show_artist.html", artist=artist)
 
-    #  Update
-    #  ----------------------------------------------------------------
     @app.route("/artists/<int:artist_id>/edit", methods=["GET"])
     def edit_artist(artist_id):
-        form = ArtistForm()
-        artist = {
-            "id": 4,
-            "name": "Guns N Petals",
-            "genres": ["Rock n Roll"],
-            "city": "San Francisco",
-            "state": "CA",
-            "phone": "326-123-5000",
-            "website": "https://www.gunsnpetalsband.com",
-            "facebook_link": "https://www.facebook.com/GunsNPetals",
-            "seeking_venue": True,
-            "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-            "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-        }
-        # TODO: populate form with fields from artist with ID <artist_id>
+        artist = Artist.get_by_id(artist_id)
+        print(Artist.to_dict(artist, {}))
+        form = ArtistForm(request.form, obj=artist)
+        form.genres.process_data(artist.genres)
+        form.seeking_venue.process_data(artist.seeking_venue)
         return render_template(
             "forms/edit_artist.html", form=form, artist=artist
         )
 
     @app.route("/artists/<int:artist_id>/edit", methods=["POST"])
     def edit_artist_submission(artist_id):
-        # TODO: take values from the form submitted, and update existing
-        # artist record with ID <artist_id> using the new attributes
-
+        genres = request.form.getlist("genres")
+        data = request.form.to_dict()
+        data["genres"] = genres
+        data["seeking_venue"] = (
+            True if data.get("seeking_venue", False) is "y" else False
+        )
+        result = Artist.update(artist_id, data)
+        if result["error"]:
+            flash(
+                "An error occurred. Artist "
+                + data["name"]
+                + " could not be updated."
+            )
+            abort(500)
+        flash("Artist " + data["name"] + " was successfully updated!")
         return redirect(url_for("show_artist", artist_id=artist_id))
 
     @app.route("/venues/<int:venue_id>/edit", methods=["GET"])

@@ -43,8 +43,8 @@ class ModelMixin(object):
         finally:
             db.session.close()
 
-    @classmethod
-    def to_dict(cls, _model, _obj):
+    @staticmethod
+    def to_dict(_model, _obj):
         _obj = _obj or {}
         for k, v in _model:
             if type(v) == collections.InstrumentedList:
@@ -109,7 +109,7 @@ class Venue(db.Model, ModelMixin):
         return cls.query.with_entities(cls.city, cls.state).distinct().all()
 
     @classmethod
-    def get_venue_by_id(cls, _id):
+    def get_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
@@ -155,7 +155,7 @@ class Venue(db.Model, ModelMixin):
             "upcoming_shows": cls.upcoming_shows(_id),
             "upcoming_shows_count": cls.upcoming_shows_count(_id),
         }
-        venue = cls.get_venue_by_id(_id)
+        venue = cls.get_by_id(_id)
         if not venue:
             return None
         return cls.to_dict(venue, _obj)
@@ -204,7 +204,7 @@ class Artist(db.Model, ModelMixin):
         return len(cls.upcoming_shows(_id))
 
     @classmethod
-    def get_artist_by_id(cls, _id):
+    def get_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
@@ -237,10 +237,26 @@ class Artist(db.Model, ModelMixin):
             "upcoming_shows": cls.upcoming_shows(_id),
             "upcoming_shows_count": cls.upcoming_shows_count(_id),
         }
-        artist = cls.get_artist_by_id(_id)
+        artist = cls.get_by_id(_id)
         if not artist:
             return None
         return cls.to_dict(artist, _obj)
+
+    @classmethod
+    def update(cls, _id, data):
+        print(data["seeking_venue"])
+        artist = cls.get_by_id(_id)
+        artist.name = data.get("name", "")
+        artist.city = data.get("city", "")
+        artist.state = data.get("state", "")
+        artist.phone = data.get("phone", "")
+        artist.genres = data.get("genres", [])
+        artist.image_link = data.get("image_link", "")
+        artist.facebook_link = data.get("facebook_link", "")
+        artist.website = data.get("website", "")
+        artist.seeking_venue = data.get("seeking_venue", False)
+        artist.seeking_description = data.get("seeking_description", "")
+        return artist.save_to_db()
 
 
 class Show(db.Model, ModelMixin):
