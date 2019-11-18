@@ -31,7 +31,9 @@ def create_app(config_name="development"):
     migrate.init_app(app, db)
     moment.init_app(app)
 
-    from models import Artist, Show, Venue
+    from models.artist import Artist
+    from models.show import Show
+    from models.venue import Venue
 
     def format_datetime(value, _format="medium"):
         date = dateutil.parser.parse(value)
@@ -244,9 +246,7 @@ def create_app(config_name="development"):
         show = Show(**data)
         result = show.save_to_db()
         if result["error"]:
-            flash(
-                "An error occurred. Show could not be listed."
-            )
+            flash("An error occurred. Show could not be listed.")
             abort(500)
         flash("Show was successfully listed!")
         return render_template("pages/home.html")

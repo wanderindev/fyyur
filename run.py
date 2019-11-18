@@ -3,7 +3,9 @@ import sys
 from sqlalchemy import exc
 from app import create_app, db
 from constants import ARTISTS, SHOWS, VENUES
-from models import Artist, Show, Venue
+from models.artist import Artist
+from models.show import Show
+from models.venue import Venue
 
 app = create_app(os.getenv("FLASK_CONFIG") or "development")
 
