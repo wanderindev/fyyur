@@ -59,7 +59,7 @@ class Venue(db.Model, ModelMixin):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def get_venue_by_location(cls):
+    def get_venues_by_location(cls):
         return [
             {
                 "city": _city,
