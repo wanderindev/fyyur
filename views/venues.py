@@ -62,7 +62,7 @@ def edit_venue_submission(venue_id):
         )
         abort(500)
     flash("Venue " + data["name"] + " was successfully updated!")
-    return redirect(url_for("show_venue", venue_id=venue_id))
+    return redirect(url_for("venues.show_venue", venue_id=venue_id))
 
 
 @bp.route("/<int:venue_id>", methods=["DELETE"])

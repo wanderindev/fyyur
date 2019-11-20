@@ -19,6 +19,23 @@ def shows():
     return render_template("pages/shows.html", shows=data)
 
 
+@bp.route("/search", methods=["POST"])
+def search_shows():
+    search_term = request.form.get("search_term", "")
+    results = Show.search(search_term)
+    return render_template(
+        "pages/search_shows.html", results=results, search_term=search_term,
+    )
+
+
+@bp.route("/<int:show_id>", methods=["GET"])
+def show_show(show_id):
+    show = Show.get_show(show_id)
+    if not show:
+        return render_template("pages/home.html")
+    return render_template("pages/show_show.html", show=show)
+
+
 @bp.route("/create")
 def create_shows():
     form = ShowForm()

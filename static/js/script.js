@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (deleteArtistBtn) {
     deleteArtistBtn.onclick = e => {
     const delId = e.target.dataset.id;
-    fetch('/artist/' + delId, {
+    fetch('/artists/' + delId, {
       method: 'DELETE'
     })
         .then(() => {

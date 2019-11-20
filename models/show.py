@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy import or_
 from app import db
 from .mixin import ModelMixin
 
@@ -79,6 +80,22 @@ class Show(db.Model, ModelMixin):
         ]
 
     @classmethod
+    def get_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def get_show(cls, _id):
+        show = cls.get_by_id(_id)
+        return {
+            "venue_id": show.venue.id,
+            "venue_name": show.venue.name,
+            "artist_id": show.artist.id,
+            "artist_name": show.artist.name,
+            "artist_image_link": show.artist.image_link,
+            "start_time": show.start_time.isoformat(),
+        }
+
+    @classmethod
     def get_shows(cls):
         return [
             {
@@ -91,3 +108,32 @@ class Show(db.Model, ModelMixin):
             }
             for show in cls.query.all()
         ]
+
+    @classmethod
+    def search(cls, search_term):
+        from .artist import Artist
+        from .venue import Venue
+
+        shows = (
+            cls.query.join(Venue)
+            .join(Artist)
+            .filter(
+                or_(
+                    Venue.name.ilike(f"%{search_term}%"),
+                    Artist.name.ilike(f"%{search_term}%"),
+                )
+            )
+            .all()
+        )
+        return {
+            "data": [
+                {
+                    "id": show.id,
+                    "venue_name": show.venue.name,
+                    "artist_name": show.artist.name,
+                    "start_time": show.start_time,
+                }
+                for show in shows
+            ],
+            "count": len(shows),
+        }

@@ -69,6 +69,7 @@ p.lead {
     box-shadow: none;
     color: black;
     font-weight: bold;
+    cursor: default;
 }
 .navbar-nav .search input {
   border-radius: 50px;
@@ -214,4 +215,8 @@ h2.monospace {
 #delete-artist-btn,
 #edit-btn {
   margin-top: 24px;
+}
+
+h1 {
+	margin-bottom: 1em;
 }

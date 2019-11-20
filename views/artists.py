@@ -62,11 +62,12 @@ def edit_artist_submission(artist_id):
         )
         abort(500)
     flash("Artist " + data["name"] + " was successfully updated!")
-    return redirect(url_for("show_artist", artist_id=artist_id))
+    return redirect(url_for("artists.show_artist", artist_id=artist_id))
 
 
 @bp.route("/<int:artist_id>", methods=["DELETE"])
 def delete_artist(artist_id):
+    print("delete")
     artist = Artist.get_by_id(artist_id)
     artist_name = artist.name
     result = artist.delete_from_db()

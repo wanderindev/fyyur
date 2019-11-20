@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import exc
 from app import db
 from constants import GENRE_CHECK
@@ -20,6 +21,7 @@ class Venue(db.Model, ModelMixin):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean, default=True)
     seeking_description = db.Column(db.String(500))
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     shows = db.relationship(
         "Show", backref="venue", lazy=True, cascade="delete"
     )

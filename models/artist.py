@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import exc
 from app import db
 from constants import GENRE_CHECK
@@ -19,7 +20,11 @@ class Artist(db.Model, ModelMixin):
     website = db.Column(db.String(500))
     seeking_venue = db.Column(db.Boolean, default=True)
     seeking_description = db.Column(db.String(500))
-    shows = db.relationship("Show", backref="artist", lazy=True)
+    date_created = db.Column(db.DateTime, nullable=False,
+                             default=datetime.utcnow)
+    shows = db.relationship(
+        "Show", backref="artist", lazy=True, cascade="delete"
+    )
 
     def __init__(self, **kwargs):
         super(Artist, self).__init__(**kwargs)
