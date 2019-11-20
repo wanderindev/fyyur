@@ -1,11 +1,15 @@
 from flask import Blueprint, render_template
+from models.artist import Artist
+from models.venue import Venue
 
 bp = Blueprint("main", __name__)
 
 
 @bp.route("/")
 def index():
-    return render_template("pages/home.html")
+    artists = Artist.get_recent()
+    venues = Venue.get_recent()
+    return render_template("pages/home.html", artists=artists, venues=venues)
 
 
 @bp.errorhandler(404)

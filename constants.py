@@ -113,7 +113,7 @@ ARTISTS = [
         "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c"
         "4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format"
         "&fit=crop&w=300&q=80",
-        "date_created": datetime.date(2017, 4, 1)
+        "date_created": datetime.date(2017, 4, 1),
     },
     {
         "id": 1005,
@@ -127,7 +127,7 @@ ARTISTS = [
         "image_link": "https://images.unsplash.com/photo-1495223153807-b"
         "916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMD"
         "d9&auto=format&fit=crop&w=334&q=80",
-        "date_created": datetime.date(2018, 1, 28)
+        "date_created": datetime.date(2018, 1, 28),
     },
     {
         "id": 1006,
@@ -140,7 +140,7 @@ ARTISTS = [
         "image_link": "https://images.unsplash.com/photo-1558369981-f9ca7846"
         "2e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=fo"
         "rmat&fit=crop&w=794&q=80",
-        "date_created": datetime.date(2016, 5, 12)
+        "date_created": datetime.date(2016, 5, 12),
     },
 ]
 VENUES = [
@@ -160,7 +160,7 @@ VENUES = [
         "image_link": "https://images.unsplash.com/photo-1543900694-133f37ab"
         "aaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto="
         "format&fit=crop&w=400&q=60",
-        "date_created": datetime.date(2019, 1, 6)
+        "date_created": datetime.date(2019, 1, 6),
     },
     {
         "id": 1002,
@@ -176,7 +176,7 @@ VENUES = [
         "image_link": "https://images.unsplash.com/photo-1497032205916-a"
         "c775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyM"
         "Dd9&auto=format&fit=crop&w=750&q=80",
-        "date_created": datetime.date(2018, 9, 11)
+        "date_created": datetime.date(2018, 9, 11),
     },
     {
         "id": 1003,
@@ -193,7 +193,7 @@ VENUES = [
         "image_link": "https://images.unsplash.com/photo-1485686531765-ba63"
         "b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&"
         "auto=format&fit=crop&w=747&q=80",
-        "date_created": datetime.date(2017, 6, 21)
+        "date_created": datetime.date(2017, 6, 21),
     },
 ]
 SHOWS = [

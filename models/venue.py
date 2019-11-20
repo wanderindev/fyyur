@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import exc
+from sqlalchemy import desc, exc
 from app import db
 from constants import GENRE_CHECK
 from .mixin import ModelMixin
@@ -21,7 +21,9 @@ class Venue(db.Model, ModelMixin):
     website = db.Column(db.String(500))
     seeking_talent = db.Column(db.Boolean, default=True)
     seeking_description = db.Column(db.String(500))
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow
+    )
     shows = db.relationship(
         "Show", backref="venue", lazy=True, cascade="delete"
     )
@@ -122,3 +124,9 @@ class Venue(db.Model, ModelMixin):
         venue.seeking_talent = data.get("seeking_talent", False)
         venue.seeking_description = data.get("seeking_description", "")
         return venue.save_to_db()
+
+    @classmethod
+    def get_recent(cls):
+        venues = cls.query.order_by(desc(cls.date_created)).limit(10).all()
+
+        return [{"id": venue.id, "name": venue.name,} for venue in venues]

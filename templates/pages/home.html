@@ -33,5 +33,35 @@
              src="{{ url_for('static', filename='img/front-splash.jpg') }}"
              alt="Front Photo of Musical Band"/>
     </div>
+    <div class="col-sm-12">
+        <h3>Recently Listed Venues</h3>
+        <ul class="items">
+            {% for venue in venues %}
+            <li>
+                <a href="{{ url_for('venues.show_venue', venue_id=venue.id) }}">
+                    <i class="fas fa-music"></i>
+                    <div class="item">
+                        <h5>{{ venue.name }}</h5>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-sm-12">
+        <h3>Recently Listed Artists</h3>
+        <ul class="items">
+            {% for artist in artists %}
+            <li>
+                <a href="{{ url_for('artists.show_artist', artist_id=artist.id) }}">
+                    <i class="fas fa-music"></i>
+                    <div class="item">
+                        <h5>{{ artist.name }}</h5>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endblock %}
