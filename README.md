@@ -20,27 +20,50 @@
 >can be found [here.](https://github.com/udacity/FSND/tree/master/projects/01_fyyur/starter_code)
 
 ## How to use
-Clone the repository:
+1.  Clone the repository and cd into the project directory:
 ```sh
 git clone https://github.com/wanderindev/fyyur.git
 cd fyyur
 ``` 
-Create a virtual environment, activate it, and install the requirements:
+2.  Deploy a Postgresql instance and create a database named ```fyyur```.  There
+are two options for this step:
+
+    a.  Use a local or remote Postgresql server and create the database there.  In this
+case, just open ```config.py``` and modify ```SQLALCHEMY_DATABASE_URI``` to point to
+the correct database.
+
+    b.  The other option is to run the included ```Dockerfile``` and ```docker-compose.yml``` to create
+    a Postgresql container with the database already set up.  You would need to have docker and docker-compose
+    already installed and configured, and follow these steps:
+    
+    -  CD into the postgresql directory:
+    ```sh
+    cd postgresql
+    ```
+    - Run the following command:
+    ```sh
+    docker-compose up --build
+    ```
+
+3.  Open a new terminal windows, letting the container run in the original terminal
+windows. In the new terminal window, cd into the project root:
+```sh
+cd fyyur
+```
+4.  Create and activate a virtual environment:
 ```sh
 python3 -m venv venv
 . venv/bin/activate
+```
+5.  Install the project requirements:
+```sh
 pip install -r requirements.txt
 ```
-Deploy a Postgresql instance in a Docker container:
-```sh
-cd postgresql
-docker-compose up --build
-```
-In a new terminal window, from the project's root, upgrade the database:
+6.  Upgrade the database:
 ```sh
 flask db upgrade
 ```
-Run the application:
+7.  Run the application:
 ```sh
 export FLASK_APP=run
 flask run
@@ -52,6 +75,12 @@ than the instance running in Docker, the connection string can be modified there
 Upon the first request, the application will populate the database with fake
 data.  This feature can be turn off changing the value for ```POPULATE_DB``` in ```config.py```
 to ```False```.
+## References
+_Effective Python_ by Brett Slatkin
+
+_Flask Web Development_ by Miguel Grinberg
+
+_Essential SQLAlchemy_ by Jason Myers and Rick Copeland
 
  ## Author
 
