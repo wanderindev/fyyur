@@ -16,10 +16,11 @@
 </p>
 
 >Fyyur is the first project for the 2019 Udacity Full-stack Developer Nanodegree.  The project
->is associated to the SQL and Data Modeling for the Web course.  The starter code and project instructions
+>is associated to the _SQL and Data Modeling for the Web_ course.  The starter code and project instructions
 >can be found [here.](https://github.com/udacity/FSND/tree/master/projects/01_fyyur/starter_code)
 
 ## How to use
+Note: A 2-minute video showing all the steps below is available [here.](https://youtu.be/oQ7lYFKKQa0)
 1.  Clone the repository and cd into the project directory:
 ```sh
 git clone https://github.com/wanderindev/fyyur.git
