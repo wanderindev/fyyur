@@ -77,11 +77,11 @@ Upon the first request, the application will populate the database with fake
 data.  This feature can be turn off changing the value for ```POPULATE_DB``` in ```config.py```
 to ```False```.
 ## References
-_Effective Python_ by Brett Slatkin
+[_Effective Python_](https://www.amazon.com/-/es/Brett-Slatkin/dp/0134034287/ref=sr_1_3?__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=effective+python&qid=1574387968&sr=8-3) by Brett Slatkin
 
-_Flask Web Development_ by Miguel Grinberg
+[_Flask Web Development_](https://www.amazon.com/-/es/Miguel-Grinberg/dp/1491991739/ref=sr_1_3?__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=3JY2ISKWMZ13V&keywords=flask+web+development&qid=1574388048&sprefix=flask+web+de%2Caps%2C208&sr=8-3) by Miguel Grinberg
 
-_Essential SQLAlchemy_ by Jason Myers and Rick Copeland
+[_Essential SQLAlchemy_](https://www.amazon.com/-/es/Jason-Myers/dp/149191646X/ref=sr_1_1?__mk_es_US=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=2S93O5UCTEF4F&keywords=essential+sqlalchemy&qid=1574388098&sprefix=essential+sqlal%2Caps%2C203&sr=8-1) by Jason Myers and Rick Copeland
 
  ## Author
 
